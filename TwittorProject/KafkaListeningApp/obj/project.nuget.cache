@@ -1,9 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "arR/4ixYx5nwQMFMSdHFzaNudcGoLCcl7ST4kB4snqWzqtmO4stxKg+q8shDzEI/GarFs4cv3ZCHwSeQHGVpdw==",
+  "dgSpecHash": "RKF851XEOZSDvaB1HApZHAR+y9WAKKAGHCjDjOn9wjfEyHAPCEMOCJ1fA1NtHxt5tSJRCvaw6vazFe+KbBZX8w==",
   "success": true,
   "projectFilePath": "/Users/renosatyaadrian/Documents/GitHub/RestAPI-GraohQL/TwittorProject/KafkaListeningApp/KafkaListeningApp.csproj",
   "expectedPackageFiles": [
+    "/Users/renosatyaadrian/.nuget/packages/confluent.kafka/1.8.2/confluent.kafka.1.8.2.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/librdkafka.redist/1.8.2/librdkafka.redist.1.8.2.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.configuration/5.0.0/microsoft.extensions.configuration.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.configuration.abstractions/5.0.0/microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.configuration.fileextensions/5.0.0/microsoft.extensions.configuration.fileextensions.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.configuration.json/5.0.0/microsoft.extensions.configuration.json.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.fileproviders.abstractions/5.0.0/microsoft.extensions.fileproviders.abstractions.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.fileproviders.physical/5.0.0/microsoft.extensions.fileproviders.physical.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.filesystemglobbing/5.0.0/microsoft.extensions.filesystemglobbing.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.extensions.primitives/5.0.0/microsoft.extensions.primitives.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/system.memory/4.5.0/system.memory.4.5.0.nupkg.sha512",
     "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.ref/5.0.0/microsoft.netcore.app.ref.5.0.0.nupkg.sha512",
     "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.13/microsoft.netcore.app.host.osx-x64.5.0.13.nupkg.sha512"
   ],

@@ -8,18 +8,21 @@ using System.Threading.Tasks;
 using HotChocolate;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using TwittorAPI.Kafka;
 using TwittorAPI.Models;
 
 namespace TwittorAPI.GraphQL
 {
     public class Mutation
     {
-        public async Task<UserData> RegisterUserAsync([Service] AppDbContext context, RegisterUserInput input)
+        public async Task<TransactionStatus> RegisterUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
         {
             var user = context.Users.Where(user=>user.Username==input.Username).FirstOrDefault();
             if(user != null)
             {
-                return await Task.FromResult(new UserData());
+                return await Task.FromResult(new TransactionStatus(false, "User already registered"));
             }
             
             var newUser = new User
@@ -30,17 +33,10 @@ namespace TwittorAPI.GraphQL
                 Password = BCrypt.Net.BCrypt.HashPassword(input.Password)
             };
             
-            var res = context.Users.Add(newUser);
-            await context.SaveChangesAsync();
-
-            return await Task.FromResult(new UserData
-                {
-                    Id = newUser.Id,
-                    FullName = input.FullName,
-                    Email = input.Email,
-                    Username = input.Username,
-                    Created = DateTime.Now
-                });
+            var key = "user-register-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(newUser).ToString(Formatting.None);
+            string topic = "user";
+            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
         public async Task<UserToken> LoginUserAsync([Service] AppDbContext context, [Service] IOptions<TokenSettings> tokenSettings,LoginUserInput input)
@@ -82,12 +78,12 @@ namespace TwittorAPI.GraphQL
             else return await Task.FromResult(new UserToken(null,null,"Invalid username or password"));
         }
 
-        public async Task<Role> CreateRoleAsync([Service] AppDbContext context, CreateRoleInput input)
+        public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToLower()).SingleOrDefault();
             if(role!=null)
             {
-                return await Task.FromResult(new Role());
+                return await Task.FromResult(new TransactionStatus(false, "Role already exist"));
             }
             var newRole = new Role
             {
@@ -96,27 +92,28 @@ namespace TwittorAPI.GraphQL
             var res = context.Roles.Add(newRole);
             await context.SaveChangesAsync();
 
-            return await Task.FromResult(new Role{
-                RoleName = newRole.RoleName
-            });
+            var key = "role-add-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(newRole).ToString(Formatting.None);
+            string topic = "role";
+            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
-        public async Task<UserRole> CreatOrUpdateUserRoleAsync([Service] AppDbContext context, CreateOrUpdateUserRoleInput input)
+        public async Task<TransactionStatus> CreatOrUpdateUserRoleAsync([Service] AppDbContext context,[Service] IOptions<KafkaSettings> kafkaSettings, CreateOrUpdateUserRoleInput input)
         {
             var user = context.Users.Where(user=>user.Username.ToLower()==input.Username.ToString().ToLower()).SingleOrDefault();
             if(user==null)
             {
-                return await ReturnNull();
+                return await Task.FromResult(new TransactionStatus(false, "User not found"));
             }
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToString().ToLower()).SingleOrDefault();
             if(role==null)
             {
-                return await ReturnNull();
+                return await Task.FromResult(new TransactionStatus(false, "Role not found"));
             }
             var userRole = context.UserRoles.Where(userRole=>userRole.UserId==user.Id && userRole.RoleId==role.Id).SingleOrDefault();
             if(userRole!=null)
             {
-                return await ReturnNull();
+                return await Task.FromResult(new TransactionStatus(false, "UserRole already exist"));
             }
             var newUserRole = new UserRole
             {
@@ -124,20 +121,21 @@ namespace TwittorAPI.GraphQL
                 UserId = user.Id
             };
 
-            var res = context.UserRoles.Add(newUserRole);
-            await context.SaveChangesAsync();
-
-            return await Task.FromResult(new UserRole
-            {
-                Id = newUserRole.Id,
-                RoleId = role.Id,
-                UserId = user.Id
-            });
+            var key = "user-role-add-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(newUserRole).ToString(Formatting.None);
+            string topic = "user-role";
+            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
-        private async Task<UserRole> ReturnNull()
+        private async Task<TransactionStatus> SendKafkaAsync(KafkaSettings kafkaSettings, string topic, string key, string val)
         {
-            return await Task.FromResult(new UserRole());
+            var result = await KafkaHelper.SendMessage(kafkaSettings, topic, key,val);
+            await KafkaHelper.SendMessage(kafkaSettings, "logging", key, val);
+            var ret = new TransactionStatus(result, "");
+            if (!result)
+                ret = new TransactionStatus(result, "Failed to submit data");
+            
+            return await Task.FromResult(ret);
         }
     }
 }

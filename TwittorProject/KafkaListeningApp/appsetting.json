@@ -1,0 +1,5 @@
+{
+    "Settings": {
+      "KafkaServer": "localhost:9092"
+    }
+}

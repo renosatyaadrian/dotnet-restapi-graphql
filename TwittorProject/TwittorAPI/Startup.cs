@@ -44,6 +44,8 @@ namespace TwittorAPI
                 // .AddAuthorization();
 
             services.Configure<TokenSettings>(_config.GetSection("TokenSettings"));
+            services.Configure<KafkaSettings>(_config.GetSection("KafkaSettings"));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
