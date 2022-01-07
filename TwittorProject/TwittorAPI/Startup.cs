@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,13 +11,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using TwittorAPI.GraphQL;
 using TwittorAPI.Models;
 
 namespace TwittorAPI
 {
     public class Startup
     {
-        private IConfiguration _config;
+        public IConfiguration _config { get; }
+
         private IWebHostEnvironment _env;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -31,11 +36,28 @@ namespace TwittorAPI
             // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=conferences.db"));
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connString));
             
-            // services
-            //     .AddGraphQLServer()
-            //     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = _env.IsDevelopment())
-            //     .AddQueryType<Query>()
-            //     .AddMutationType<Mutation>();
+            services
+                .AddGraphQLServer()
+                .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = _env.IsDevelopment())
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>();
+                // .AddAuthorization();
+
+            services.Configure<TokenSettings>(_config.GetSection("TokenSettings"));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = _config.GetSection("TokenSettings").GetValue<string>("Issuer"),
+                        ValidateIssuer = true,
+                        ValidAudience = _config.GetSection("TokenSettings").GetValue<string>("Audience"),
+                        ValidateAudience = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("TokenSettings").GetValue<string>("Key"))),
+                        ValidateIssuerSigningKey = true
+                    };
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,12 +70,12 @@ namespace TwittorAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            // app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapGraphQL();
             });
         }
     }

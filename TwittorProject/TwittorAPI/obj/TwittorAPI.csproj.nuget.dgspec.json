@@ -38,6 +38,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.2, )"
+            },
             "Confluent.Kafka": {
               "target": "Package",
               "version": "[1.8.2, )"
@@ -45,6 +49,14 @@
             "HotChocolate.AspNetCore": {
               "target": "Package",
               "version": "[12.4.1, )"
+            },
+            "HotChocolate.AspNetCore.Authorization": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[5.0.13, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
