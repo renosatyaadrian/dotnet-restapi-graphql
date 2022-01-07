@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "HUr2FL+60m5m1SQUUg9w4OLi6oYOekWqfMsjAiQ/IEKYi/JrOSJZ5Q1ScKgs3OTfcA817MdrpjFx8U72TCCtJQ==",
+  "success": true,
+  "projectFilePath": "/Users/renosatyaadrian/Documents/GitHub/RestAPI-GraohQL/TwittorProject/KafkaApp/KafkaApp.csproj",
+  "expectedPackageFiles": [
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.ref/5.0.0/microsoft.netcore.app.ref.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.13/microsoft.netcore.app.host.osx-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "TUNVmItc/Z4e7f0kz+HGeoTFrDWmuiB1hAyO5Z98TGZAuFWCE3HaU0VVBvPoj4TD8GPgQ7QB4cdqThDnK24ZAg==",
+  "success": true,
+  "projectFilePath": "/Users/renosatyaadrian/Documents/GitHub/RestAPI-GraohQL/TwittorProject/TwittorAPI/TwittorAPI.csproj",
+  "expectedPackageFiles": [
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.ref/5.0.0/microsoft.netcore.app.ref.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.13/microsoft.netcore.app.host.osx-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
