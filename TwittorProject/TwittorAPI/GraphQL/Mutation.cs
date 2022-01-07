@@ -38,7 +38,8 @@ namespace TwittorAPI.GraphQL
                     Id = newUser.Id,
                     FullName = input.FullName,
                     Email = input.Email,
-                    Username = input.Username
+                    Username = input.Username,
+                    Created = DateTime.Now
                 });
         }
 
@@ -98,6 +99,45 @@ namespace TwittorAPI.GraphQL
             return await Task.FromResult(new Role{
                 RoleName = newRole.RoleName
             });
+        }
+
+        public async Task<UserRole> CreatOrUpdateUserRoleAsync([Service] AppDbContext context, CreateOrUpdateUserRoleInput input)
+        {
+            var user = context.Users.Where(user=>user.Username.ToLower()==input.Username.ToString().ToLower()).SingleOrDefault();
+            if(user==null)
+            {
+                return await ReturnNull();
+            }
+            var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToString().ToLower()).SingleOrDefault();
+            if(role==null)
+            {
+                return await ReturnNull();
+            }
+            var userRole = context.UserRoles.Where(userRole=>userRole.UserId==user.Id && userRole.RoleId==role.Id).SingleOrDefault();
+            if(userRole!=null)
+            {
+                return await ReturnNull();
+            }
+            var newUserRole = new UserRole
+            {
+                RoleId = role.Id,
+                UserId = user.Id
+            };
+
+            var res = context.UserRoles.Add(newUserRole);
+            await context.SaveChangesAsync();
+
+            return await Task.FromResult(new UserRole
+            {
+                Id = newUserRole.Id,
+                RoleId = role.Id,
+                UserId = user.Id
+            });
+        }
+
+        private async Task<UserRole> ReturnNull()
+        {
+            return await Task.FromResult(new UserRole());
         }
     }
 }

@@ -28,5 +28,10 @@ namespace TwittorAPI.GraphQL
         {
             return context.Roles;
         }
+
+        public IQueryable<UserRole> GetUserRoles([Service] AppDbContext context)
+        {
+            return context.UserRoles;
+        }
     }
 }
