@@ -1,0 +1,6 @@
+debug.log
+
+_ReSharper.*
+bin
+obj
+packages
