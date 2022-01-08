@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HotChocolate;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -17,6 +18,11 @@ namespace TwittorAPI.GraphQL
 {
     public class Mutation
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public Mutation(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
         public async Task<TransactionStatus> RegisterUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
         {
             var user = context.Users.Where(user=>user.Username==input.Username).FirstOrDefault();
@@ -36,7 +42,8 @@ namespace TwittorAPI.GraphQL
             var key = "user-register-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newUser).ToString(Formatting.None);
             string topic = "user";
-            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
         public async Task<UserToken> LoginUserAsync([Service] AppDbContext context, [Service] IOptions<TokenSettings> tokenSettings,LoginUserInput input)
@@ -54,6 +61,7 @@ namespace TwittorAPI.GraphQL
 
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimTypes.Name, user.Username));
+                claims.Add(new Claim("Id", user.Id.ToString()));
                 var userRoles = context.UserRoles.Where(userRole=>userRole.UserId==user.Id).ToList();
                 foreach (var userRole in userRoles)
                 {
@@ -78,6 +86,27 @@ namespace TwittorAPI.GraphQL
             else return await Task.FromResult(new UserToken(null,null,"Invalid username or password"));
         }
 
+        public async Task<TransactionStatus> UpdateUserProfileAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
+        {
+            var user = new User();
+            
+            if(input.Id==null) 
+            {
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
+                user = context.Users.Where(user=>user.Id==Convert.ToInt32(userId)).SingleOrDefault();
+            }
+            else user = context.Users.Where(user=>user.Id==input.Id).SingleOrDefault();
+            user.Email = input.Email;
+            user.FullName = input.FullName;
+            user.Username = input.Username;
+
+            var key = "user-update-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(user).ToString(Formatting.None);
+            string topic = "user";
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+        }
+
         public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToLower()).SingleOrDefault();
@@ -95,7 +124,8 @@ namespace TwittorAPI.GraphQL
             var key = "role-add-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newRole).ToString(Formatting.None);
             string topic = "role";
-            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
         public async Task<TransactionStatus> CreatOrUpdateUserRoleAsync([Service] AppDbContext context,[Service] IOptions<KafkaSettings> kafkaSettings, CreateOrUpdateUserRoleInput input)
@@ -124,18 +154,8 @@ namespace TwittorAPI.GraphQL
             var key = "user-role-add-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newUserRole).ToString(Formatting.None);
             string topic = "user-role";
-            return await SendKafkaAsync(kafkaSettings.Value, topic, key, val);
-        }
-
-        private async Task<TransactionStatus> SendKafkaAsync(KafkaSettings kafkaSettings, string topic, string key, string val)
-        {
-            var result = await KafkaHelper.SendMessage(kafkaSettings, topic, key,val);
-            await KafkaHelper.SendMessage(kafkaSettings, "logging", key, val);
-            var ret = new TransactionStatus(result, "");
-            if (!result)
-                ret = new TransactionStatus(result, "Failed to submit data");
-            
-            return await Task.FromResult(ret);
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
     }
 }
