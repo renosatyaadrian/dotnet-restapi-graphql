@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
+using TwittorAPI.GraphQL;
 using TwittorAPI.Models;
 
 namespace TwittorAPI.Kafka
@@ -20,28 +21,6 @@ namespace TwittorAPI.Kafka
                 ClientId = Dns.GetHostName(),
 
             }; 
-            using (var adminClient = new AdminClientBuilder(config).Build())
-            {                
-                try
-                {
-                    await adminClient.CreateTopicsAsync(new List<TopicSpecification> {
-                        new TopicSpecification { 
-                            Name = topic, 
-                            NumPartitions = settings.NumPartitions, 
-                            ReplicationFactor = settings.ReplicationFactor } });
-                }
-                catch (CreateTopicsException e)
-                {
-                    if (e.Results[0].Error.Code != ErrorCode.TopicAlreadyExists)
-                    {
-                        Console.WriteLine($"An error occured creating topic {topic}: {e.Results[0].Error.Reason}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Topic already exists");
-                    }
-                }
-            }
             using (var producer = new ProducerBuilder<string, string>(config).Build())
             {
                 producer.Produce(topic, new Message<string, string>
@@ -63,6 +42,17 @@ namespace TwittorAPI.Kafka
                 producer.Flush(TimeSpan.FromSeconds(10));
             }
             return await Task.FromResult(succeed);
+        }
+
+        public static async Task<TransactionStatus> SendKafkaAsync(KafkaSettings kafkaSettings, string topic, string key, string val)
+        {
+            var result = await KafkaHelper.SendMessage(kafkaSettings, topic, key,val);
+            await KafkaHelper.SendMessage(kafkaSettings, "logging", key, val);
+            var ret = new TransactionStatus(result, "");
+            if (!result)
+                ret = new TransactionStatus(result, "Failed to submit data");
+            
+            return await Task.FromResult(ret);
         }
     }
 }
