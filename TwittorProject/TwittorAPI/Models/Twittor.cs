@@ -16,7 +16,7 @@ namespace TwittorAPI.Models
         [Required]
         public DateTime Created { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
     }
 }
