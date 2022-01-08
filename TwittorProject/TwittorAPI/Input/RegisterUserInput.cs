@@ -7,9 +7,10 @@ namespace TwittorAPI.GraphQL
 {
     public record RegisterUserInput
     (
+        int? Id,
         string Username,
         string Email,
         string FullName,
-        string Password
+        string? Password
     );
 }
