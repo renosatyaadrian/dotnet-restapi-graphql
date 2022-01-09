@@ -41,7 +41,8 @@ namespace TwittorAPI.GraphQL
                 FullName = input.FullName,
                 Email = input.Email.ToLower(),
                 Username = input.Username.ToLower(),
-                Password = BCrypt.Net.BCrypt.HashPassword(input.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password),
+                IsLocked = false
             };
             
             var key = "user-register-" + DateTime.Now.ToString();
@@ -91,7 +92,6 @@ namespace TwittorAPI.GraphQL
             else return await Task.FromResult(new UserToken(null,null,"Invalid username or password"));
         }
 
-        
         [Authorize(Roles = new [] { "user" })]
         public async Task<TransactionStatus> UpdateUserProfileAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
         {
@@ -114,6 +114,44 @@ namespace TwittorAPI.GraphQL
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
+        [Authorize(Roles = new [] {"admin", "user"})]
+        public async Task<TransactionStatus> UpdatePasswordUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, UpdatePasswordUserInput input)
+        {
+            var user = new User();
+            if(input.Id==null) 
+            {
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
+                user = context.Users.Where(user=>user.Id==Convert.ToInt32(userId)).SingleOrDefault();
+            }
+            else user = context.Users.Where(user=>user.Id==input.Id).SingleOrDefault();
+
+            var valid = BCrypt.Net.BCrypt.Verify(input.oldPassword, user.Password);
+            if(valid){
+                user.Password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+            }
+            var key = "user-update-password-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(user).ToString(Formatting.None);
+            string topic = "user-update-password";
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+        }
+
+        [Authorize(Roles = new [] {"admin"})]
+        public async Task<TransactionStatus> LockUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, LockUserInput input)
+        {
+            var user = context.Users.Where(user=>user.Id == input.UserId).FirstOrDefault();
+            if(user != null)
+            {
+                return await Task.FromResult(new TransactionStatus(false, "User not found"));
+            }
+            user.IsLocked = input.IsLocked;
+            var key = "user-lock-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(user).ToString(Formatting.None);
+            string topic = "user-lock";
+            await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+        }
+        
         [Authorize(Roles = new [] { "admin" })]
         public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
