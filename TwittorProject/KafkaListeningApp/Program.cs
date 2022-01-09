@@ -12,7 +12,9 @@ namespace KafkaListeningApp
     class Program
     {
         static async Task<int> Main(string[] args)
-        {var config = new ProducerConfig
+        {
+            
+            var producerConfig = new ProducerConfig
             {
                 BootstrapServers = "127.0.0.1:9092",
                 ClientId = Dns.GetHostName(),
@@ -20,11 +22,16 @@ namespace KafkaListeningApp
             };
             var topics = new List<String>();
             topics.Add("logging");
-            topics.Add("role");
-            topics.Add("user");
+            topics.Add("user-add");
+            topics.Add("user-update");
+            topics.Add("role-add");
+            topics.Add("user-role-add");
+            topics.Add("twittor-add");
+            topics.Add("twittor-delete");
+            topics.Add("comment-add");
             foreach(var topic in topics)
             {
-                using (var adminClient = new AdminClientBuilder(config).Build())
+                using (var adminClient = new AdminClientBuilder(producerConfig).Build())
                 {
                     Console.WriteLine("Creating a topic....");
                     try
@@ -43,10 +50,53 @@ namespace KafkaListeningApp
                             Console.WriteLine("Topic already exists");
                         }
                     }
-                }
-            }
 
-            return 0;
+                    var builder = new ConfigurationBuilder()
+                    .AddJsonFile($"appsettings.json", true, true);
+
+                    var config = builder.Build();
+
+
+                    var Serverconfig = new ConsumerConfig
+                    {
+                        BootstrapServers = config["Settings:KafkaServer"],
+                        GroupId = "tester",
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    };
+                    var loggingTopic = "logging";
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    Console.CancelKeyPress += (_, e) => {
+                        e.Cancel = true; // prevent the process from terminating.
+                        cts.Cancel();
+                    };
+
+                    using (var consumer = new ConsumerBuilder<string, string>(Serverconfig).Build())
+                    {
+                        Console.WriteLine("Connected");
+                        consumer.Subscribe(loggingTopic);
+                        Console.WriteLine("Waiting messages....");
+                        try
+                        {
+                            while (true)
+                            {
+                                var cr = consumer.Consume(cts.Token);
+                                Console.WriteLine($"Consumed record with key: {cr.Message.Key} and value: {cr.Message.Value}");
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Ctrl-C was pressed.
+                        }
+                        finally
+                        {
+                            consumer.Close();
+                        }
+
+                    }
+                        }
+                    }
+
+                    return 0;
         }
     }
 }
