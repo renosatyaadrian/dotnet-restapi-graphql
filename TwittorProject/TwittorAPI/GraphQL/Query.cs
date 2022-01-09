@@ -6,20 +6,32 @@ using System.Threading.Tasks;
 using HotChocolate;
 using Microsoft.AspNetCore.Http;
 using TwittorAPI.Models;
+using HotChocolate.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using TwittorAPI.Kafka;
+using Microsoft.Extensions.Options;
 
 namespace TwittorAPI.GraphQL
 {
     public class Query
     {
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IOptions<KafkaSettings> _kafkaSettings;
 
-        public Query(IHttpContextAccessor httpContextAccessor)
+        public Query([Service] IOptions<KafkaSettings> kafkaSettings, IHttpContextAccessor httpContextAccessor)
         {
             _httpContext = httpContextAccessor;
+            _kafkaSettings = kafkaSettings;
         }
-        public IQueryable<User> GetUsers([Service] AppDbContext context) 
+        public async Task<IQueryable<User>> GetUsersAsync([Service] AppDbContext context) 
         {
-            return context.Users;
+            
+            var user = context.Users;
+            var key = "users_get-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(user).ToString(Formatting.None);
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return user;
         }
 
         public IQueryable<Comment> GetComments([Service] AppDbContext context)
@@ -27,25 +39,36 @@ namespace TwittorAPI.GraphQL
             return context.Comments;
         }
         
-        public IQueryable<Twittor> GetTwittors([Service] AppDbContext context)
+        public async Task<IQueryable<Twittor>> GetTwittorsAsync([Service] AppDbContext context)
         {
-            return context.Twittors;
+            var twittor = context.Twittors;
+            var key = "twittors-get" + DateTime.Now.ToString();
+            var val = JObject.FromObject(twittor).ToString(Formatting.None);
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return twittor;
         }
 
+        [Authorize(Roles = new [] {"admin"})]
         public IQueryable<Role> GetRoles([Service] AppDbContext context)
         {
             return context.Roles;
         }
 
+        [Authorize(Roles = new [] {"admin"})]
         public IQueryable<UserRole> GetUserRoles([Service] AppDbContext context)
         {
             return context.UserRoles;
         }
 
-        public IQueryable<User> GetUserProfile([Service] AppDbContext context)
+        [Authorize(Roles = new [] {"user"})]
+        public async Task<IQueryable<User>> GetUserProfileAsync([Service] AppDbContext context)
         {
             var userId = _httpContext.HttpContext.User.FindFirst("Id").Value;
-            return context.Users.Where(user=>user.Id == Convert.ToInt32(userId));
+            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId));
+            var key = "user-get-profile-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(user).ToString(Formatting.None);
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return user;
         }
     }
 }
