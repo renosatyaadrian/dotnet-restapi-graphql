@@ -129,6 +129,7 @@ namespace TwittorAPI.GraphQL
             if(valid){
                 user.Password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
             }
+            else return new TransactionStatus(false, "Invalid password");
             var key = "user-update-password-" + DateTime.Now.ToString();
             var val = JObject.FromObject(user).ToString(Formatting.None);
             string topic = "user-update";

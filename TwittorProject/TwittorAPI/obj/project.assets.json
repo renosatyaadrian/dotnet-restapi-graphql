@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {
+    "net5.0": {
       "BCrypt.Net-Next/4.0.2": {
         "type": "package",
         "compile": {
@@ -32,10 +32,10 @@
           "System.Threading.Tasks.Extensions": "4.5.0"
         },
         "compile": {
-          "lib/net6.0/GreenDonut.dll": {}
+          "lib/net5.0/GreenDonut.dll": {}
         },
         "runtime": {
-          "lib/net6.0/GreenDonut.dll": {}
+          "lib/net5.0/GreenDonut.dll": {}
         }
       },
       "HotChocolate/12.4.1": {
@@ -59,10 +59,10 @@
           "System.Collections.Immutable": "1.7.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Abstractions.dll": {}
+          "lib/net5.0/HotChocolate.Abstractions.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Abstractions.dll": {}
+          "lib/net5.0/HotChocolate.Abstractions.dll": {}
         }
       },
       "HotChocolate.AspNetCore/12.4.1": {
@@ -72,10 +72,10 @@
           "HotChocolate.Types.Scalars.Upload": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.AspNetCore.dll": {}
+          "lib/net5.0/HotChocolate.AspNetCore.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.AspNetCore.dll": {}
+          "lib/net5.0/HotChocolate.AspNetCore.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -93,10 +93,10 @@
           "Microsoft.Extensions.DependencyInjection": "3.1.4"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.AspNetCore.Authorization.dll": {}
+          "lib/net5.0/HotChocolate.AspNetCore.Authorization.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.AspNetCore.Authorization.dll": {}
+          "lib/net5.0/HotChocolate.AspNetCore.Authorization.dll": {}
         }
       },
       "HotChocolate.Execution/12.4.1": {
@@ -111,10 +111,10 @@
           "System.Threading.Channels": "4.7.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Execution.dll": {}
+          "lib/net5.0/HotChocolate.Execution.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Execution.dll": {}
+          "lib/net5.0/HotChocolate.Execution.dll": {}
         }
       },
       "HotChocolate.Fetching/12.4.1": {
@@ -124,10 +124,10 @@
           "HotChocolate.Types": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Fetching.dll": {}
+          "lib/net5.0/HotChocolate.Fetching.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Fetching.dll": {}
+          "lib/net5.0/HotChocolate.Fetching.dll": {}
         }
       },
       "HotChocolate.Language/12.4.1": {
@@ -138,10 +138,10 @@
           "HotChocolate.Language.Visitors": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Language.dll": {}
+          "lib/net5.0/HotChocolate.Language.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Language.dll": {}
+          "lib/net5.0/HotChocolate.Language.dll": {}
         }
       },
       "HotChocolate.Language.SyntaxTree/12.4.1": {
@@ -150,10 +150,10 @@
           "Microsoft.Extensions.ObjectPool": "3.1.4"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Language.SyntaxTree.dll": {}
+          "lib/net5.0/HotChocolate.Language.SyntaxTree.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Language.SyntaxTree.dll": {}
+          "lib/net5.0/HotChocolate.Language.SyntaxTree.dll": {}
         }
       },
       "HotChocolate.Language.Utf8/12.4.1": {
@@ -162,10 +162,10 @@
           "HotChocolate.Language.SyntaxTree": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Language.Utf8.dll": {}
+          "lib/net5.0/HotChocolate.Language.Utf8.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Language.Utf8.dll": {}
+          "lib/net5.0/HotChocolate.Language.Utf8.dll": {}
         }
       },
       "HotChocolate.Language.Visitors/12.4.1": {
@@ -174,10 +174,10 @@
           "HotChocolate.Language.SyntaxTree": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Language.Visitors.dll": {}
+          "lib/net5.0/HotChocolate.Language.Visitors.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Language.Visitors.dll": {}
+          "lib/net5.0/HotChocolate.Language.Visitors.dll": {}
         }
       },
       "HotChocolate.Subscriptions/12.4.1": {
@@ -187,10 +187,10 @@
           "Microsoft.Bcl.AsyncInterfaces": "1.1.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Subscriptions.dll": {}
+          "lib/net5.0/HotChocolate.Subscriptions.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Subscriptions.dll": {}
+          "lib/net5.0/HotChocolate.Subscriptions.dll": {}
         }
       },
       "HotChocolate.Subscriptions.InMemory/12.4.1": {
@@ -202,10 +202,10 @@
           "System.Threading.Channels": "4.7.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Subscriptions.InMemory.dll": {}
+          "lib/net5.0/HotChocolate.Subscriptions.InMemory.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Subscriptions.InMemory.dll": {}
+          "lib/net5.0/HotChocolate.Subscriptions.InMemory.dll": {}
         }
       },
       "HotChocolate.Types/12.4.1": {
@@ -221,10 +221,10 @@
           "System.Text.Json": "4.7.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Types.dll": {}
+          "lib/net5.0/HotChocolate.Types.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Types.dll": {}
+          "lib/net5.0/HotChocolate.Types.dll": {}
         }
       },
       "HotChocolate.Types.CursorPagination/12.4.1": {
@@ -234,10 +234,10 @@
           "HotChocolate.Types": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Types.CursorPagination.dll": {}
+          "lib/net5.0/HotChocolate.Types.CursorPagination.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Types.CursorPagination.dll": {}
+          "lib/net5.0/HotChocolate.Types.CursorPagination.dll": {}
         }
       },
       "HotChocolate.Types.Mutations/12.4.1": {
@@ -247,10 +247,10 @@
           "HotChocolate.Types": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Types.Mutations.dll": {}
+          "lib/net5.0/HotChocolate.Types.Mutations.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Types.Mutations.dll": {}
+          "lib/net5.0/HotChocolate.Types.Mutations.dll": {}
         }
       },
       "HotChocolate.Types.OffsetPagination/12.4.1": {
@@ -260,10 +260,10 @@
           "HotChocolate.Types": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Types.OffsetPagination.dll": {}
+          "lib/net5.0/HotChocolate.Types.OffsetPagination.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Types.OffsetPagination.dll": {}
+          "lib/net5.0/HotChocolate.Types.OffsetPagination.dll": {}
         }
       },
       "HotChocolate.Types.Scalars.Upload/12.4.1": {
@@ -272,10 +272,10 @@
           "HotChocolate.Types": "12.4.1"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Types.Scalars.Upload.dll": {}
+          "lib/net5.0/HotChocolate.Types.Scalars.Upload.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Types.Scalars.Upload.dll": {}
+          "lib/net5.0/HotChocolate.Types.Scalars.Upload.dll": {}
         }
       },
       "HotChocolate.Utilities/12.4.1": {
@@ -287,10 +287,10 @@
           "System.Threading.Tasks.Extensions": "4.5.4"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Utilities.dll": {}
+          "lib/net5.0/HotChocolate.Utilities.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Utilities.dll": {}
+          "lib/net5.0/HotChocolate.Utilities.dll": {}
         }
       },
       "HotChocolate.Utilities.Introspection/12.4.1": {
@@ -300,10 +300,10 @@
           "System.Text.Json": "4.7.0"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Utilities.Introspection.dll": {}
+          "lib/net5.0/HotChocolate.Utilities.Introspection.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Utilities.Introspection.dll": {}
+          "lib/net5.0/HotChocolate.Utilities.Introspection.dll": {}
         }
       },
       "HotChocolate.Validation/12.4.1": {
@@ -314,10 +314,10 @@
           "Microsoft.Extensions.Options": "3.1.4"
         },
         "compile": {
-          "lib/net6.0/HotChocolate.Validation.dll": {}
+          "lib/net5.0/HotChocolate.Validation.dll": {}
         },
         "runtime": {
-          "lib/net6.0/HotChocolate.Validation.dll": {}
+          "lib/net5.0/HotChocolate.Validation.dll": {}
         }
       },
       "Humanizer.Core/2.8.26": {
@@ -6637,7 +6637,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net6.0": [
+    "net5.0": [
       "BCrypt.Net-Next >= 4.0.2",
       "Confluent.Kafka >= 1.8.2",
       "HotChocolate.AspNetCore >= 12.4.1",
@@ -6665,14 +6665,14 @@
         "/Users/renosatyaadrian/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net6.0"
+        "net5.0"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net5.0": {
+          "targetAlias": "net5.0",
           "projectReferences": {}
         }
       },
@@ -6683,8 +6683,8 @@
       }
     },
     "frameworks": {
-      "net6.0": {
-        "targetAlias": "net6.0",
+      "net5.0": {
+        "targetAlias": "net5.0",
         "dependencies": {
           "BCrypt.Net-Next": {
             "target": "Package",
@@ -6735,6 +6735,16 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Host.osx-x64",
+            "version": "[5.0.13, 5.0.13]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"

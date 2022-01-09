@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "GRMdWRtFpo2pRoiNf7veeb30cUIivElTr7utvZ3idNtO0NQ0HH7+NlpdDHIh9XhANL5U1bYTDd0P5TLWov/iuQ==",
+  "dgSpecHash": "G7UQpBZ37ks6qXEQMxh3uef09mWZFxWr6UiM93VFLNeapn3pb4a/K/7XhB5tyz3ToiQjEtdBBChSd1MONdhOxA==",
   "success": true,
   "projectFilePath": "/Users/renosatyaadrian/Documents/GitHub/RestAPI-GraohQL/TwittorProject/TwittorAPI/TwittorAPI.csproj",
   "expectedPackageFiles": [
@@ -129,7 +129,9 @@
     "/Users/renosatyaadrian/.nuget/packages/system.xml.readerwriter/4.3.0/system.xml.readerwriter.4.3.0.nupkg.sha512",
     "/Users/renosatyaadrian/.nuget/packages/system.xml.xdocument/4.3.0/system.xml.xdocument.4.3.0.nupkg.sha512",
     "/Users/renosatyaadrian/.nuget/packages/system.xml.xmldocument/4.3.0/system.xml.xmldocument.4.3.0.nupkg.sha512",
-    "/Users/renosatyaadrian/.nuget/packages/system.xml.xmlserializer/4.3.0/system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    "/Users/renosatyaadrian/.nuget/packages/system.xml.xmlserializer/4.3.0/system.xml.xmlserializer.4.3.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.ref/5.0.0/microsoft.netcore.app.ref.5.0.0.nupkg.sha512",
+    "/Users/renosatyaadrian/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.13/microsoft.netcore.app.host.osx-x64.5.0.13.nupkg.sha512"
   ],
   "logs": []
 }
