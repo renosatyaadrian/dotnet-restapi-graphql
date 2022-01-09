@@ -42,7 +42,7 @@ namespace TwittorAPI.Kafka
                 producer.Flush(TimeSpan.FromSeconds(10));
             }
 
-            var ret = new TransactionStatus(succeed, "");
+            var ret = new TransactionStatus(succeed, "Success");
             if (!succeed)
                 ret = new TransactionStatus(succeed, "Failed to submit data");
             
