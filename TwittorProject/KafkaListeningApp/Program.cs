@@ -16,9 +16,8 @@ namespace KafkaListeningApp
             
             var producerConfig = new ProducerConfig
             {
-                BootstrapServers = "127.0.0.1:9092",
+                BootstrapServers = "localhost:9092",
                 ClientId = Dns.GetHostName(),
-
             };
             var topics = new List<String>();
             topics.Add("logging");
@@ -50,53 +49,47 @@ namespace KafkaListeningApp
                             Console.WriteLine("Topic already exists");
                         }
                     }
+                }
+            }
 
-                    var builder = new ConfigurationBuilder()
-                    .AddJsonFile($"appsettings.json", true, true);
+            var builder = new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.json", true, true);
+            var config = builder.Build();
+            var Serverconfig = new ConsumerConfig
+            {
+                BootstrapServers = "localhost:9092",
+                GroupId = "logging1",
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Console.CancelKeyPress += (_, e) => {
+                e.Cancel = true; // prevent the process from terminating.
+                cts.Cancel();
+            };
 
-                    var config = builder.Build();
-
-
-                    var Serverconfig = new ConsumerConfig
+            using (var consumer = new ConsumerBuilder<string, string>(Serverconfig).Build())
+            {
+                Console.WriteLine("Connected");
+                consumer.Subscribe(topics);
+                Console.WriteLine("Waiting messages....");
+                try
+                {
+                    while (true)
                     {
-                        BootstrapServers = config["Settings:KafkaServer"],
-                        GroupId = "tester",
-                        AutoOffsetReset = AutoOffsetReset.Earliest
-                    };
-                    var loggingTopic = "logging";
-                    CancellationTokenSource cts = new CancellationTokenSource();
-                    Console.CancelKeyPress += (_, e) => {
-                        e.Cancel = true; // prevent the process from terminating.
-                        cts.Cancel();
-                    };
-
-                    using (var consumer = new ConsumerBuilder<string, string>(Serverconfig).Build())
-                    {
-                        Console.WriteLine("Connected");
-                        consumer.Subscribe(loggingTopic);
-                        Console.WriteLine("Waiting messages....");
-                        try
-                        {
-                            while (true)
-                            {
-                                var cr = consumer.Consume(cts.Token);
-                                Console.WriteLine($"Consumed record with key: {cr.Message.Key} and value: {cr.Message.Value}");
-                            }
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            // Ctrl-C was pressed.
-                        }
-                        finally
-                        {
-                            consumer.Close();
-                        }
-
+                        var cr = consumer.Consume(cts.Token);
+                        Console.WriteLine($"Consumed record with key: {cr.Message.Key} and value: {cr.Message.Value}");
                     }
-                        }
-                    }
-
-                    return 0;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ctrl-C was pressed.
+                }
+                finally
+                {
+                    consumer.Close();
+                }
+            }
+            return 0;
         }
     }
 }
