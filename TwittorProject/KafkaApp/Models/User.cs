@@ -19,6 +19,7 @@ namespace KafkaApp.Models
         public string Password { get; set; }
         public DateTime Created { get; set; }
         public string FullName { get; set; }
+        public bool? IsLocked { get; set; }
 
         public virtual ICollection<Twittor> Twittors { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }

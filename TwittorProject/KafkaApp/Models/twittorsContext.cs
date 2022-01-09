@@ -32,15 +32,10 @@ namespace KafkaApp.Models
             var config = builder.Build();
             optionsBuilder.UseSqlServer(config["Settings:Database"]);
 
-            //            if (!optionsBuilder.IsConfigured)
-            //            {
-            //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-            //                optionsBuilder.UseSqlServer("Server=localhost;database=ShoppingCart;uid=student;pwd=pass123");
-            //            }
-            // if (!optionsBuilder.IsConfigured)
+//             if (!optionsBuilder.IsConfigured)
 //             {
 // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                 optionsBuilder.UseSqlServer("Server=localhost,1433;Database=twittors;MultipleActiveResultSets=true;User=sa;Password=Swordman89!@#;");
+//                 optionsBuilder.UseSqlServer("Server=localhost,1433;Database=twittors;MultipleActiveResultSets=true;User=sa;Password=Swordman89!@#");
 //             }
         }
 
@@ -77,6 +72,10 @@ namespace KafkaApp.Models
                 entity.Property(e => e.FullName)
                     .IsRequired()
                     .HasDefaultValueSql("(N'')");
+
+                entity.Property(e => e.IsLocked)
+                    .IsRequired()
+                    .HasDefaultValueSql("(CONVERT([bit],(0)))");
 
                 entity.Property(e => e.Password).IsRequired();
 
