@@ -21,13 +21,6 @@ namespace KafkaListeningApp
             };
             var topics = new List<String>();
             topics.Add("logging");
-            topics.Add("user-add");
-            topics.Add("user-update");
-            topics.Add("role-add");
-            topics.Add("user-role-add");
-            topics.Add("twittor-add");
-            topics.Add("twittor-delete");
-            topics.Add("comment-add");
             foreach(var topic in topics)
             {
                 using (var adminClient = new AdminClientBuilder(producerConfig).Build())
@@ -58,7 +51,7 @@ namespace KafkaListeningApp
             var Serverconfig = new ConsumerConfig
             {
                 BootstrapServers = "localhost:9092",
-                GroupId = "logging1",
+                GroupId = "logging",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -70,7 +63,7 @@ namespace KafkaListeningApp
             using (var consumer = new ConsumerBuilder<string, string>(Serverconfig).Build())
             {
                 Console.WriteLine("Connected");
-                consumer.Subscribe(topics);
+                consumer.Subscribe("logging");
                 Console.WriteLine("Waiting messages....");
                 try
                 {
