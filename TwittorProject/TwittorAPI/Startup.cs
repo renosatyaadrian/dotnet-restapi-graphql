@@ -33,21 +33,12 @@ namespace TwittorAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
-            var connString = _config.GetConnectionString("LocalSQLEdge");
-            // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=conferences.db"));
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connString));
-            
-            services
-                .AddGraphQLServer()
-                .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = _env.IsDevelopment())
-                .AddQueryType<Query>()
-                .AddMutationType<Mutation>();
-                // .AddAuthorization();
-
             services.Configure<TokenSettings>(_config.GetSection("TokenSettings"));
             services.Configure<KafkaSettings>(_config.GetSection("KafkaSettings"));
-
+            services.AddAuthorization();
+            var connString = _config.GetConnectionString("LocalSQLEdge");
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connString));
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -62,6 +53,12 @@ namespace TwittorAPI
                     };
                 });
 
+            services
+                .AddGraphQLServer()
+                .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = _env.IsDevelopment())
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>()
+                .AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,7 +72,7 @@ namespace TwittorAPI
             app.UseRouting();
 
             app.UseAuthentication();
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
