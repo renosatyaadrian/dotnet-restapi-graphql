@@ -131,7 +131,7 @@ namespace TwittorAPI.GraphQL
             }
             var key = "user-update-password-" + DateTime.Now.ToString();
             var val = JObject.FromObject(user).ToString(Formatting.None);
-            string topic = "user-update-password";
+            string topic = "user-update";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
@@ -140,14 +140,14 @@ namespace TwittorAPI.GraphQL
         public async Task<TransactionStatus> LockUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, LockUserInput input)
         {
             var user = context.Users.Where(user=>user.Id == input.UserId).FirstOrDefault();
-            if(user != null)
+            if(user == null)
             {
                 return await Task.FromResult(new TransactionStatus(false, "User not found"));
             }
             user.IsLocked = input.IsLocked;
             var key = "user-lock-" + DateTime.Now.ToString();
             var val = JObject.FromObject(user).ToString(Formatting.None);
-            string topic = "user-lock";
+            string topic = "user-update";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
