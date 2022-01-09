@@ -29,8 +29,7 @@ namespace TwittorAPI.GraphQL
             
             var user = context.Users;
             var key = "users_get-" + DateTime.Now.ToString();
-            var val = JObject.FromObject(user).ToString(Formatting.None);
-            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, "get all users");
             return user;
         }
 
@@ -43,8 +42,7 @@ namespace TwittorAPI.GraphQL
         {
             var twittor = context.Twittors;
             var key = "twittors-get" + DateTime.Now.ToString();
-            var val = JObject.FromObject(twittor).ToString(Formatting.None);
-            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, "get all twittors");
             return twittor;
         }
 
@@ -66,7 +64,7 @@ namespace TwittorAPI.GraphQL
             var userId = _httpContext.HttpContext.User.FindFirst("Id").Value;
             var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId));
             var key = "user-get-profile-" + DateTime.Now.ToString();
-            var val = JObject.FromObject(user).ToString(Formatting.None);
+            var val = JObject.FromObject(user.SingleOrDefault()).ToString(Formatting.None);
             await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
             return user;
         }
