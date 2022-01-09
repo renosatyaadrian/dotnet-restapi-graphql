@@ -35,11 +35,11 @@ namespace KafkaApp
                 Console.WriteLine("Connected");
                 var topics = new string[] { 
                     "user-add", 
-                    "user-update", 
-                    "role-add" , 
-                    "user-role-add" , 
-                    "twittor-add" , 
-                    "twittor-delete" , 
+                    "user-update",
+                    "role-add", 
+                    "user-role-add", 
+                    "twittor-add", 
+                    "twittor-delete", 
                     "comment-add"  
                 };
                 consumer.Subscribe(topics);
