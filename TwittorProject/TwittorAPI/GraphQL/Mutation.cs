@@ -6,11 +6,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HotChocolate;
+using HotChocolate.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TwittorAPI.Input;
 using TwittorAPI.Kafka;
 using TwittorAPI.Models;
 
@@ -19,9 +21,12 @@ namespace TwittorAPI.GraphQL
     public class Mutation
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public Mutation(IHttpContextAccessor httpContextAccessor)
+        private readonly IOptions<KafkaSettings> _kafkaSettings;
+
+        public Mutation([Service] IOptions<KafkaSettings> kafkaSettings, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+            _kafkaSettings = kafkaSettings;
         }
         public async Task<TransactionStatus> RegisterUserAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
         {
@@ -41,7 +46,7 @@ namespace TwittorAPI.GraphQL
             
             var key = "user-register-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newUser).ToString(Formatting.None);
-            string topic = "user";
+            string topic = "user-add";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
@@ -86,6 +91,8 @@ namespace TwittorAPI.GraphQL
             else return await Task.FromResult(new UserToken(null,null,"Invalid username or password"));
         }
 
+        
+        [Authorize(Roles = new [] { "user" })]
         public async Task<TransactionStatus> UpdateUserProfileAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, RegisterUserInput input)
         {
             var user = new User();
@@ -102,11 +109,12 @@ namespace TwittorAPI.GraphQL
 
             var key = "user-update-" + DateTime.Now.ToString();
             var val = JObject.FromObject(user).ToString(Formatting.None);
-            string topic = "user";
+            string topic = "user-update";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
 
+        [Authorize(Roles = new [] { "admin" })]
         public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToLower()).SingleOrDefault();
@@ -123,7 +131,7 @@ namespace TwittorAPI.GraphQL
 
             var key = "role-add-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newRole).ToString(Formatting.None);
-            string topic = "role";
+            string topic = "role-add";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
@@ -153,9 +161,60 @@ namespace TwittorAPI.GraphQL
 
             var key = "user-role-add-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newUserRole).ToString(Formatting.None);
-            string topic = "user-role";
+            string topic = "user-role-add";
             await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, "logging", key, val);
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
+        }
+
+        [Authorize(Roles = new [] { "user" })]
+        public async Task<TransactionStatus> PostTwittorAsync([Service] AppDbContext context, CreateTwittorInput input)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
+            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId)).SingleOrDefault();
+
+            var newTwit = new Twittor
+            {
+                Twit = input.Twittor,
+                Created = DateTime.Now,
+                UserId = Convert.ToInt32(userId)
+            };
+            var key = "twittor-add-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(newTwit).ToString(Formatting.None);
+            string topic = "twittor-add";
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, topic, key, val);
+        }
+
+        [Authorize(Roles = new [] { "user" })]
+        public async Task<TransactionStatus> DeleteTwittorAsync([Service] AppDbContext context, DeleteTwitInput input)
+        {
+            var twit = context.Twittors.Where(twit=>twit.Id==input.Id).SingleOrDefault();
+            if(twit == null) return await Task.FromResult(new TransactionStatus(false, "Twit not found"));
+
+            var key = "twittor-delete-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(twit).ToString(Formatting.None);
+            string topic = "twittor-delete";
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, topic, key, val);
+        }
+
+
+        [Authorize(Roles = new [] { "user" })]
+        public async Task<TransactionStatus> CreateTwitCommentAsync([Service] AppDbContext context, CommentTwitInput input)
+        {
+            var twit = context.Twittors.Where(twit=>twit.Id==input.TwitorId).SingleOrDefault();
+            if(twit == null) return await Task.FromResult(new TransactionStatus(false, "Twit not found"));
+
+            var comment = new Comment
+            {
+                CommentDesc = input.Comment,
+                TwittorId = twit.Id
+            };
+            var key = "comment-add-" + DateTime.Now.ToString();
+            var val = JObject.FromObject(comment).ToString(Formatting.None);
+            string topic = "comment-add";
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
+            return await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, topic, key, val);
         }
     }
 }
