@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EnrollmentService.Data;
 using EnrollmentService.Helper;
+using EnrollmentService.SyncDataServices.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -72,6 +73,8 @@ namespace EnrollmentService
             services.AddScoped<IUser, UserDAL>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddHttpClient<IEnrollmentDataClient, HttpEnrollmentDataClient>();
+            
             services.AddControllers().AddNewtonsoftJson(options=>
             options.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
