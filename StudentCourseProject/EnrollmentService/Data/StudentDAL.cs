@@ -65,6 +65,7 @@ namespace EnrollmentService.Data
                 student.LastName = Obj.LastName;
                 student.EnrollmentDate = Obj.EnrollmentDate;
                 await _dbContext.SaveChangesAsync();
+                Obj.Id = student.Id;
                 return Obj;
             }
             catch (DbUpdateException ex)
