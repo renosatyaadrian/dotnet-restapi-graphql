@@ -40,7 +40,7 @@ namespace EnrollmentService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<StudentDto>> CreateStudent([FromBody] StudentForCreateDto studentCreateDto)
+        public async Task<ActionResult<StudentDto>> CreateStudent([FromBody] CreateStudentDto studentCreateDto)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace EnrollmentService.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<StudentDto>> UpdateStudent(int id, [FromBody] StudentForCreateDto studentUpdateDto)
+        public async Task<ActionResult<StudentDto>> UpdateStudent(int id, [FromBody] CreateStudentDto studentUpdateDto)
         {
             try
             {
