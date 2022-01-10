@@ -22,7 +22,7 @@ namespace EnrollmentService.Data
 
         public async Task<IEnumerable<Enrollment>> GetAll()
         {
-            return await _db.Enrollments.ToListAsync(); 
+            return await _db.Enrollments.Include(e=>e.Student).Include(e=>e.Course).AsNoTracking().ToListAsync(); 
         }
 
         public Task<Enrollment> GetById(int Id)
