@@ -131,7 +131,8 @@ namespace EnrollmentService.Data
             {
                 var newUser = new IdentityUser
                 {
-                    UserName = user.Username, Email = user.Username
+                    UserName = user.Username, 
+                    Email = user.Username
                 };
                 var result = await _userManager.CreateAsync(newUser, user.Password);
                 if(!result.Succeeded)
