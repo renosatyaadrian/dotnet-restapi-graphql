@@ -31,6 +31,8 @@ namespace EnrollmentService
             services.AddDbContext<AppDbContext>(options => 
             options.UseSqlServer(Configuration.GetConnectionString("LocalSQLEdge")));
 
+            services.AddScoped<IStudent, StudentDAL>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
