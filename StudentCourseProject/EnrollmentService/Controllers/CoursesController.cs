@@ -6,10 +6,12 @@ using AutoMapper;
 using EnrollmentService.Data;
 using EnrollmentService.Dtos;
 using EnrollmentService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnrollmentService.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class CoursesController : ControllerBase
@@ -22,8 +24,10 @@ namespace EnrollmentService.Controllers
             _course = course;
             _mapper = mapper;
         }
+
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> Get()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
         {
             var courses = await _course.GetAll();
             var dtos = _mapper.Map<IEnumerable<CourseDto>>(courses);

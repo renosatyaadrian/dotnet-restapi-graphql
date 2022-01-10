@@ -6,10 +6,12 @@ using AutoMapper;
 using EnrollmentService.Data;
 using EnrollmentService.Dtos;
 using EnrollmentService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnrollmentService.Controllers
 {
+    [Authorize(Roles = "Student")]
     [ApiController]
     [Route("api/[controller]")]
     public class StudentsController : ControllerBase
@@ -39,6 +41,7 @@ namespace EnrollmentService.Controllers
             return Ok(dtos);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<StudentDto>> CreateStudent([FromBody] CreateStudentDto studentCreateDto)
         {
@@ -71,6 +74,7 @@ namespace EnrollmentService.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Student")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
