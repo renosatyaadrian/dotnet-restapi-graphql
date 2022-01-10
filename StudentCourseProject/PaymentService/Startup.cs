@@ -33,6 +33,7 @@ namespace PaymentService
             options.UseSqlServer(Configuration.GetConnectionString("LocalSQLEdge")));
             
             services.AddScoped<IEnrollment, EnrollmentDAL>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
