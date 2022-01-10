@@ -11,9 +11,8 @@ namespace EnrollmentService.Dtos
         [Required(ErrorMessage = "Title tidak boleh kosong")]
         [MaxLength(50)]
         public string Title { get; set; }
-        
+
         [Required(ErrorMessage = "Credit tidak boleh kosong")]
-        [MaxLength(10)]
         public int Credits { get; set; }
 
         [Required(ErrorMessage = "Price tidak boleh kosong")]
