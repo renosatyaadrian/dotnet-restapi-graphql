@@ -69,7 +69,12 @@ namespace EnrollmentService
             services.AddScoped<ICourse, CourseDAL>();
             services.AddScoped<IEnrollment, EnrollmentDAL>();
             services.AddScoped<IStudent, StudentDAL>();
+            services.AddScoped<IUser, UserDAL>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddControllers().AddNewtonsoftJson(options=>
+            options.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 
             services.AddSwaggerGen(c =>
             {
