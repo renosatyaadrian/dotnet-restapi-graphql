@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EnrollmentService.Dtos
 {
-    public class StudentForCreateDto
+    public class CreateStudentDto
     {
         [Required(ErrorMessage = "First name cannot be empty")]
         [MaxLength(255, ErrorMessage = "First name cannot excess 255 character")]

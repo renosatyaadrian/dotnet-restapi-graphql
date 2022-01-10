@@ -14,7 +14,7 @@ namespace EnrollmentService.Profiles
         {
             CreateMap<Student, StudentDto>().ForMember(dest=>dest.FullName, opt=>opt.MapFrom(s => s.FirstName + " " + s.LastName));
 
-            CreateMap<StudentForCreateDto, Student>();
+            CreateMap<CreateStudentDto, Student>();
         }
     }
 }
