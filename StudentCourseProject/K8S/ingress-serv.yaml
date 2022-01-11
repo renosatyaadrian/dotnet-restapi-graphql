@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+  - host: devbootcamp.id
+    http:
+      paths:
+      - pathType: Prefix
+        path: /api/enrollment
+        backend:
+          service:
+            name: enrollment-clusterip-srv
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /api/payment
+        backend:
+          service:
+            name: payment-clusterip-srv
+            port:
+              number: 80
