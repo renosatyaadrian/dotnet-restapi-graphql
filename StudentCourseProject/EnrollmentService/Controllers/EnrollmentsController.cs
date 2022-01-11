@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EnrollmentService.Controllers
 {
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Student")]
     [ApiController]
     [Route("api/[controller]")]
     public class EnrollmentsController : ControllerBase
