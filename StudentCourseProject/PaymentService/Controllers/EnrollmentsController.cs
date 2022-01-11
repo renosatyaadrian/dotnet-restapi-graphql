@@ -11,7 +11,7 @@ using PaymentService.Models;
 namespace PaymentService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/c/[controller]")]
     public class EnrollmentsController : ControllerBase
     {
         private readonly IEnrollment _enrollment;
