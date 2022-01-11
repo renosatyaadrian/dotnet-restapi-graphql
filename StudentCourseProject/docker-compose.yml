@@ -1,0 +1,19 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  enrollmentservice:
+    image: renosatyaadrian/enrollmentservice
+    build:
+      context: .
+      dockerfile: EnrollmentService/Dockerfile
+    ports:
+      - 6001:6001
+  paymentservice:
+    image: renosatyaadrian/paymentservice
+    build:
+      context: .
+      dockerfile: PaymentService/Dockerfile
+    ports:
+      - 5001:5001
