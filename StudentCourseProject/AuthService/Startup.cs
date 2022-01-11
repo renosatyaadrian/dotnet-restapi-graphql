@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AuthService.Data;
+using AuthService.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,6 +33,9 @@ namespace AuthService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(options => 
+            options.UseSqlServer(Configuration.GetConnectionString("LocalSQLEdge")));
+            
             services.AddIdentity<IdentityUser,IdentityRole>(options => {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireLowercase = true;
@@ -61,6 +66,7 @@ namespace AuthService
                 };
             });
 
+            services.AddScoped<IUser, UserDAL>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
