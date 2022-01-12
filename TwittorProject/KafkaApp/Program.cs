@@ -17,12 +17,11 @@ namespace KafkaApp
 
             var config = builder.Build();
 
-
             var Serverconfig = new ConsumerConfig
             {
                 BootstrapServers = config["Settings:KafkaServer"],
                 GroupId = "tester",
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Latest
             };
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => {

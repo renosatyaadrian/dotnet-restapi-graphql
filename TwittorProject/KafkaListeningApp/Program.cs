@@ -13,10 +13,13 @@ namespace KafkaListeningApp
     {
         static async Task<int> Main(string[] args)
         {
-            
+            var builder = new ConfigurationBuilder()
+                    .AddJsonFile($"appsettings.json", true, true);
+
+            var config = builder.Build();
             var producerConfig = new ProducerConfig
             {
-                BootstrapServers = "localhost:9092",
+                BootstrapServers = config["Settings:KafkaServer"],
                 ClientId = Dns.GetHostName(),
             };
             var topics = new List<String>();
@@ -44,15 +47,11 @@ namespace KafkaListeningApp
                     }
                 }
             }
-
-            var builder = new ConfigurationBuilder()
-            .AddJsonFile($"appsettings.json", true, true);
-            var config = builder.Build();
             var Serverconfig = new ConsumerConfig
             {
-                BootstrapServers = "localhost:9092",
+                BootstrapServers = config["Settings:KafkaServer"],
                 GroupId = "logging",
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Latest
             };
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => {
