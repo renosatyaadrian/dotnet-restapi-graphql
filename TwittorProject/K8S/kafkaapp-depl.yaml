@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafkaapp-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafkaappservice
+  template:
+    metadata:
+      labels:
+        app: kafkaappservice
+    spec:
+      containers:
+      - name: kafkaappservice
+        image: renosatyaadrian/kafkaappservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafkaapp-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: kafkaappservice
+  ports:
+  - name: kafkaappservice
+    protocol: TCP
+    port: 80
+    targetPort: 80
