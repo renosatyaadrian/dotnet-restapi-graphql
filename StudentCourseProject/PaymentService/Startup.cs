@@ -19,19 +19,32 @@ namespace PaymentService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
 
+        private readonly IWebHostEnvironment _env;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<enrollmentsContext>(options => 
-            options.UseSqlServer(Configuration.GetConnectionString("LocalSQLEdge")));
-            
+            if (_env.IsProduction())
+            {
+                Console.WriteLine("--> using Azure server Db");
+                services.AddDbContext<enrollmentsContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("AzureConnection")));
+            }
+            else
+            {
+                Console.WriteLine("--> Using LocalDB");
+                services.AddDbContext<enrollmentsContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("LocalSQLEdge")));
+            }
+
             services.AddScoped<IEnrollment, EnrollmentDAL>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
