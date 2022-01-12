@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using TwittorAPI.Data;
 using TwittorAPI.GraphQL;
 using TwittorAPI.Models;
 
@@ -32,13 +33,22 @@ namespace TwittorAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            if (_env.IsProduction())
+            {
+                Console.WriteLine("--> using Azure server Db");
+                services.AddDbContext<AppDbContext>(options => 
+                options.UseSqlServer(_config.GetConnectionString("AzureConnection")));
+            }
+            else
+            {
+                Console.WriteLine("--> Using LocalDB");
+                services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(_config.GetConnectionString("LocalSQLEdge")));
+            }
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<TokenSettings>(_config.GetSection("TokenSettings"));
             services.Configure<KafkaSettings>(_config.GetSection("KafkaSettings"));
             services.AddAuthorization();
-            var connString = _config.GetConnectionString("LocalSQLEdge");
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connString));
-            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -78,6 +88,8 @@ namespace TwittorAPI
             {
                 endpoints.MapGraphQL();
             });
+
+            PrepDb.PrePopulation(app, env.IsProduction());
         }
     }
 }
