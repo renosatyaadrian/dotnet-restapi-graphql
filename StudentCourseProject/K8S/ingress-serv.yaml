@@ -7,20 +7,34 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-  - host: devbootcamp.id
+  - host: devbootcamp-rest-graph.id
     http:
       paths:
-      - pathType: Prefix
-        path: /api/enrollment
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: enrollment-clusterip-srv
             port: 
               number: 80
-      - pathType: Prefix
-        path: /api/payment
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: payment-clusterip-srv
             port:
               number: 80
+      # - path: /api/users
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: auth-clusterip-srv
+      #       port:
+      #         number: 80
+      # - path: /api/graphql
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: twittorapi-clusterip-srv
+      #       port:
+      #         number: 80
