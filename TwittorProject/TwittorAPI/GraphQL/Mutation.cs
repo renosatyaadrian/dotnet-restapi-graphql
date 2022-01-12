@@ -153,7 +153,7 @@ namespace TwittorAPI.GraphQL
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
         
-        [Authorize(Roles = new [] { "admin" })]
+        // [Authorize(Roles = new [] { "admin" })]
         public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToLower()).SingleOrDefault();
@@ -209,8 +209,9 @@ namespace TwittorAPI.GraphQL
         public async Task<TransactionStatus> PostTwittorAsync([Service] AppDbContext context, CreateTwittorInput input)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
-            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId)).SingleOrDefault();
-
+            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId) && user.IsLocked.Equals(false)).SingleOrDefault();
+            if(user == null) return await Task.FromResult(new TransactionStatus(false, "User not found / locked"));
+            
             var newTwit = new Twittor
             {
                 Twit = input.Twittor,
@@ -224,9 +225,12 @@ namespace TwittorAPI.GraphQL
             return await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, topic, key, val);
         }
 
-        [Authorize(Roles = new [] { "user" })]
+        [Authorize(Roles = new [] { "user", "admin" })]
         public async Task<TransactionStatus> DeleteTwittorAsync([Service] AppDbContext context, DeleteTwitInput input)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
+            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId) && user.IsLocked.Equals(false)).SingleOrDefault();
+            if(user == null) return await Task.FromResult(new TransactionStatus(false, "User not found / locked"));
             var twit = context.Twittors.Where(twit=>twit.Id==input.Id).SingleOrDefault();
             if(twit == null) return await Task.FromResult(new TransactionStatus(false, "Twit not found"));
 
@@ -241,6 +245,9 @@ namespace TwittorAPI.GraphQL
         [Authorize(Roles = new [] { "user" })]
         public async Task<TransactionStatus> CreateTwitCommentAsync([Service] AppDbContext context, CommentTwitInput input)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("Id").Value;
+            var user = context.Users.Where(user=>user.Id == Convert.ToInt32(userId) && user.IsLocked.Equals(false)).SingleOrDefault();
+            if(user == null) return await Task.FromResult(new TransactionStatus(false, "User not found / locked"));
             var twit = context.Twittors.Where(twit=>twit.Id==input.TwitorId).SingleOrDefault();
             if(twit == null) return await Task.FromResult(new TransactionStatus(false, "Twit not found"));
 
