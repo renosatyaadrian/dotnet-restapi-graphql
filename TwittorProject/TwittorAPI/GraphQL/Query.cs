@@ -51,7 +51,6 @@ namespace TwittorAPI.GraphQL
             return context.Roles;
         }
 
-        [Authorize(Roles = new [] {"admin"})]
         public IQueryable<UserRole> GetUserRoles([Service] AppDbContext context)
         {
             return context.UserRoles;
@@ -67,17 +66,5 @@ namespace TwittorAPI.GraphQL
             await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
             return user;
         }
-
-    
-        // [Authorize(Roles = new [] {"user"})]
-        // public async Task<IQueryable<Comment>> GetCommentByUserLogin([Service] AppDbContext context)
-        // {
-        //     var userId = _httpContext.HttpContext.User.FindFirst("Id").Value;
-        //     var comments = context.Comments.Where(user=>user.Id == Convert.ToInt32(userId));
-        //     var key = "user-get-profile-" + DateTime.Now.ToString();
-        //     var val = JObject.FromObject("Get All Comments").ToString(Formatting.None);
-        //     await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, val);
-        //     return comments;
-        // }
     }
 }
