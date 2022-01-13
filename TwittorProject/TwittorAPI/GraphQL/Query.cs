@@ -26,7 +26,6 @@ namespace TwittorAPI.GraphQL
         }
         public async Task<IQueryable<User>> GetUsersAsync([Service] AppDbContext context) 
         {
-            
             var user = context.Users;
             var key = "users_get-" + DateTime.Now.ToString();
             await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, "get all users");
