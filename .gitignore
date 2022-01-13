@@ -7,3 +7,6 @@ packages
 
 launch.json
 tasks.json
+
+kafka_data
+zookeeper_data
