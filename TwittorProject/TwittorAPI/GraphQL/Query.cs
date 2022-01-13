@@ -33,9 +33,12 @@ namespace TwittorAPI.GraphQL
             return user;
         }
 
-        public IQueryable<Comment> GetComments([Service] AppDbContext context)
+        public async Task<IQueryable<Comment>> GetComments([Service] AppDbContext context)
         {
-            return context.Comments;
+            var comments = context.Comments;      
+            var key = "comments_get--" + DateTime.Now.ToString();
+            await KafkaHelper.SendKafkaAsync(_kafkaSettings.Value, "logging", key, "get all comments");
+            return comments;
         }
         
         public async Task<IQueryable<Twittor>> GetTwittorsAsync([Service] AppDbContext context)
