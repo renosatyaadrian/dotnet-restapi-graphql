@@ -153,7 +153,6 @@ namespace TwittorAPI.GraphQL
             return await KafkaHelper.SendKafkaAsync(kafkaSettings.Value, topic, key, val);
         }
         
-        // [Authorize(Roles = new [] { "admin" })]
         public async Task<TransactionStatus> CreateRoleAsync([Service] AppDbContext context, [Service] IOptions<KafkaSettings> kafkaSettings, CreateRoleInput input)
         {
             var role = context.Roles.Where(role=>role.RoleName.ToLower()==input.RoleName.ToLower()).SingleOrDefault();
@@ -165,8 +164,6 @@ namespace TwittorAPI.GraphQL
             {
                 RoleName = input.RoleName
             };
-            var res = context.Roles.Add(newRole);
-            await context.SaveChangesAsync();
 
             var key = "role-add-" + DateTime.Now.ToString();
             var val = JObject.FromObject(newRole).ToString(Formatting.None);
