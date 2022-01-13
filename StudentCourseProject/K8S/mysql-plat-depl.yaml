@@ -13,27 +13,27 @@ spec:
         app: sqledge
     spec:
       volumes:
-        - name: sqldata
-          persistentVolumeClaim:
-            claimName: mssql-data
+      - name: sqldata
+        persistentVolumeClaim:
+          claimName: mssql-data
       containers:
-        - name: azuresqledge
-          image: mcr.microsoft.com/azure-sql-edge:latest
-          ports:
-            - containerPort: 1433
-          volumeMounts:
-            - name: sqldata
-              mountPath: /var/opt/mssql
-          env:
-            - name: MSSQL_PID
-              value: "Developer"
-            - name: ACCEPT_EULA
-              value: "Y"
-            - name: SA_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mssql
-                  key: SA_PASSWORD
+      - name: azuresqledge
+        image: mcr.microsoft.com/azure-sql-edge:latest
+        ports:
+          - containerPort: 1433
+        volumeMounts:
+          - name: sqldata
+            mountPath: /var/opt/mssql
+        env:
+          - name: MSSQL_PID
+            value: "Developer"
+          - name: ACCEPT_EULA
+            value: "Y"
+          - name: SA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mssql
+                key: SA_PASSWORD
 ---
 apiVersion: v1
 kind: Service
