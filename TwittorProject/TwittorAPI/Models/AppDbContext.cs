@@ -25,5 +25,22 @@ namespace TwittorAPI.Models
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<Car> Cars { get; set; }
+
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Car>()
+                .HasKey(b => b.Id)
+                .HasName("PrimaryKey_CarId");
+
+            modelBuilder.Entity<Car>()
+                .Property(c => c.CreatedDate)
+                .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Car>()
+                .Property(p => p.DisplayName)
+                .HasComputedColumnSql("[Model] + ' ' + [Type]");
+        }
     }
 }
