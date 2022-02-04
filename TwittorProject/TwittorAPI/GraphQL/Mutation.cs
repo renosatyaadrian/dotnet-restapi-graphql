@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using TwittorAPI.Input;
 using TwittorAPI.Kafka;
 using TwittorAPI.Models;
+using TwittorAPI.Constants;
 
 namespace TwittorAPI.GraphQL
 {

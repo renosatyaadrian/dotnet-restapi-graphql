@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TwittorAPI.Models;
+using TwittorAPI.Constants;
 
 namespace TwittorAPI.Kafka
 {

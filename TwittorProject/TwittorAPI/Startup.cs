@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using TwittorAPI.Constants;
 using TwittorAPI.Data;
 using TwittorAPI.GraphQL;
 using TwittorAPI.Models;
@@ -72,7 +73,9 @@ namespace TwittorAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, 
+                              IWebHostEnvironment env,
+                              PrepDb prepDb)
         {
             if (env.IsDevelopment())
             {
@@ -81,6 +84,8 @@ namespace TwittorAPI
 
             app.UseRouting();
 
+            _ = prepDb.SeedData(env.IsProduction());
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -88,8 +93,6 @@ namespace TwittorAPI
             {
                 endpoints.MapGraphQL();
             });
-
-            PrepDb.PrePopulation(app, env.IsProduction());
         }
     }
 }

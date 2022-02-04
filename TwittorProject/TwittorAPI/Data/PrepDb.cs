@@ -11,22 +11,20 @@ namespace TwittorAPI.Data
 {
     public class PrepDb
     {
-        public static void PrePopulation(IApplicationBuilder app, bool isProd)
-        {
-            using(var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
-            };
-        }
+        private readonly AppDbContext context;
 
-        private static void SeedData(AppDbContext context, bool isProd)
+        public PrepDb(AppDbContext context)
+        {
+            this.context = context;
+        }
+        public async Task SeedData(bool isProd)
         {
             if(isProd)
             {  
                 Console.Write("--> Menjalankan migrasi");
                 try
                 {
-                     context.Database.Migrate();
+                    await context.Database.MigrateAsync();
                 }
                 catch (Exception ex)
                 {
@@ -42,7 +40,7 @@ namespace TwittorAPI.Data
                     new User(){ Username = "rezaaditya", Password = "Renoreno123", FullName = "Reza Aditya", Email = "rezaaditya@gmail.com", IsLocked = false, Created = DateTime.Now }
                 );
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
