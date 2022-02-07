@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using TwittorAPI.Constants;
 using TwittorAPI.Data;
 using TwittorAPI.GraphQL;
+using TwittorAPI.GraphQL.Mutations;
 using TwittorAPI.Models;
 
 namespace TwittorAPI
@@ -30,8 +31,10 @@ namespace TwittorAPI
             _config = configuration;
             _env = env;
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
             if (_env.IsProduction())
@@ -49,6 +52,8 @@ namespace TwittorAPI
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<TokenSettings>(_config.GetSection("TokenSettings"));
             services.Configure<KafkaSettings>(_config.GetSection("KafkaSettings"));
+            services.AddTransient<PrepDb>();
+            
             services.AddAuthorization();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -68,7 +73,10 @@ namespace TwittorAPI
                 .AddGraphQLServer()
                 .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = _env.IsDevelopment())
                 .AddQueryType<Query>()
-                .AddMutationType<Mutation>()
+                .AddMutationType(d => d.Name("Mutation"))
+                    .AddTypeExtension<UserMutation>()
+                    .AddTypeExtension<AdminMutation>()
+                .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
                 .AddAuthorization();
         }
 
